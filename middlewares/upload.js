@@ -3,7 +3,7 @@ const AppError = require('../utils/appError');
 const fs = require('fs');
 
 const uploadDir = 'public/uploads';
-if (!fs.existsSync(uploadDir)) {
+if (process.env.NODE_ENV !== 'production' && !fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
