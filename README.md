@@ -63,9 +63,4 @@ A production-grade backend API built with Node.js and Express, designed to manag
 4. **Access the Portal**
    Open your browser and navigate to `http://localhost:5000`
 
-## Resume & Interview Focus
-This project is structured to demonstrate an understanding of real-world backend development. The implementation prioritizes:
-- **Scalability**: Proper code splitting and separation of concerns.
-- **Security**: Mitigation of common web vulnerabilities (XSS, NoSQL Injection, Brute-force attacks).
-- **Database Optimization**: Mongoose indexing, proper schema design, and aggregation pipelines.
-- **Clean Code Practices**: Standardized API responses, async error wrappers, and thorough documentation structure.
+
