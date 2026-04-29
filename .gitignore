@@ -120,7 +120,8 @@ Thumbs.db
 build/
 dist/
 
-# Uploads directory (if you have file uploads)
+# Uploads directory
+public/uploads/
 uploads/
 
 # SSL certificates
