@@ -2,6 +2,7 @@ const express = require('express');
 const resourceController = require('../controllers/resourceController');
 const authController = require('../middlewares/auth');
 const uploadMiddleware = require('../middlewares/upload');
+const { validateRequest, resourceSchema } = require('../middlewares/validator');
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router
   .post(
     authController.protect,
     uploadMiddleware.uploadResourceFile,
+    validateRequest(resourceSchema),
     resourceController.createResource
   );
 
