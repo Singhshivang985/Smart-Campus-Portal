@@ -1,0 +1,80 @@
+<div style="margin-bottom: 2rem;">
+  <h2>Admin Panel</h2>
+  <p style="color: var(--text-light);">Manage and approve pending resources.</p>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <h3>System Analytics</h3>
+  <div class="grid grid-cols-3" style="margin-top: 1rem;" id="analyticsBox">
+    Loading...
+  </div>
+</div>
+
+<h3>Pending Approvals</h3>
+<div class="grid grid-cols-3" style="margin-top: 1rem;">
+  <% if(pendingResources.length === 0) { %>
+    <p>No resources pending approval.</p>
+  <% } else { %>
+    <% pendingResources.forEach(resource => { %>
+      <div class="card" id="resource-<%= resource._id %>">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span class="badge badge-pending"><%= resource.category %></span>
+          <span style="font-size: 0.75rem;">By <%= resource.uploader.name %></span>
+        </div>
+        <h4 style="margin-bottom: 0.5rem;"><%= resource.title %></h4>
+        <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 1rem;"><%= resource.description %></p>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="<%= resource.fileUrl %>" target="_blank" class="btn btn-outline" style="font-size: 0.875rem; flex: 1; text-align: center;">View File</a>
+          <button class="btn btn-success" style="font-size: 0.875rem; flex: 1;" onclick="updateStatus('<%= resource._id %>', 'approved')">Approve</button>
+          <button class="btn btn-danger" style="font-size: 0.875rem; flex: 1;" onclick="updateStatus('<%= resource._id %>', 'rejected')">Reject</button>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+<script>
+  async function loadAnalytics() {
+    try {
+      const res = await fetch('/api/resources/analytics');
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById('analyticsBox').innerHTML = `
+          <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem;">
+            <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Total Users</h4>
+            <p style="font-size: 1.5rem; font-weight: 700;">${data.data.totalUsers}</p>
+          </div>
+          <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem;">
+            <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Approved Resources</h4>
+            <p style="font-size: 1.5rem; font-weight: 700;">${data.data.totalResources}</p>
+          </div>
+          <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem;">
+            <h4 style="color: var(--text-light); margin-bottom: 0.5rem;">Pending Approvals</h4>
+            <p style="font-size: 1.5rem; font-weight: 700;">${data.data.pendingResources}</p>
+          </div>
+        `;
+      }
+    } catch(e) {}
+  }
+  
+  async function updateStatus(id, status) {
+    try {
+      const res = await fetch(`/api/resources/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById(`resource-${id}`).remove();
+        loadAnalytics();
+      } else {
+        alert(data.message);
+      }
+    } catch(e) {
+      alert('Error updating status');
+    }
+  }
+
+  loadAnalytics();
+</script>

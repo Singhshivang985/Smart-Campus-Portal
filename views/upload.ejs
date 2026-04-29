@@ -1,0 +1,59 @@
+<div style="max-width: 600px; margin: 0 auto;" class="card">
+  <h2 style="margin-bottom: 1.5rem;">Upload Resource</h2>
+  <form id="uploadForm">
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input type="text" id="title" class="form-control" required />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea id="description" class="form-control" rows="3" required></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select id="category" class="form-control" required>
+        <option value="Notes">Notes</option>
+        <option value="PYQs">PYQs</option>
+        <option value="Lab Manuals">Lab Manuals</option>
+        <option value="Placement Preparation">Placement Preparation</option>
+        <option value="Resume Templates">Resume Templates</option>
+        <option value="Coding Sheets">Coding Sheets</option>
+        <option value="Interview Experiences">Interview Experiences</option>
+        <option value="Projects">Projects</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">File (PDF, Image, Word, Zip)</label>
+      <input type="file" id="file" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Upload</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', document.getElementById('title').value);
+    formData.append('description', document.getElementById('description').value);
+    formData.append('category', document.getElementById('category').value);
+    formData.append('file', document.getElementById('file').files[0]);
+
+    try {
+      const res = await fetch('/api/resources', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        alert('Resource uploaded successfully!');
+        location.assign('/resources');
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      alert('Error uploading resource');
+    }
+  });
+</script>

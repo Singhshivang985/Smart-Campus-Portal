@@ -1,0 +1,42 @@
+<div style="max-width: 400px; margin: 2rem auto;" class="card">
+  <h2 style="margin-bottom: 1.5rem; text-align: center;">Log In</h2>
+  <form id="loginForm">
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" id="email" class="form-control" required />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+  </form>
+  <p style="margin-top: 1rem; text-align: center; font-size: 0.875rem;">
+    Don't have an account? <a href="/signup">Sign up</a>
+  </p>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        location.assign('/');
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      alert('Error logging in');
+    }
+  });
+</script>

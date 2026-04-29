@@ -1,0 +1,61 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h2>All Resources</h2>
+  <a href="/upload" class="btn btn-primary">Upload New</a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+  <form action="/resources" method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 200px;">
+      <input type="text" name="search" placeholder="Search title or description..." value="<%= search %>" class="form-control" />
+    </div>
+    <div style="flex: 1; min-width: 200px;">
+      <select name="category" class="form-control">
+        <option value="">All Categories</option>
+        <option value="Notes" <%= category === 'Notes' ? 'selected' : '' %>>Notes</option>
+        <option value="PYQs" <%= category === 'PYQs' ? 'selected' : '' %>>PYQs</option>
+        <option value="Lab Manuals" <%= category === 'Lab Manuals' ? 'selected' : '' %>>Lab Manuals</option>
+        <option value="Placement Preparation" <%= category === 'Placement Preparation' ? 'selected' : '' %>>Placement Preparation</option>
+        <option value="Resume Templates" <%= category === 'Resume Templates' ? 'selected' : '' %>>Resume Templates</option>
+        <option value="Coding Sheets" <%= category === 'Coding Sheets' ? 'selected' : '' %>>Coding Sheets</option>
+        <option value="Interview Experiences" <%= category === 'Interview Experiences' ? 'selected' : '' %>>Interview Experiences</option>
+        <option value="Projects" <%= category === 'Projects' ? 'selected' : '' %>>Projects</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="/resources" class="btn btn-outline">Clear</a>
+  </form>
+</div>
+
+<div class="grid grid-cols-3">
+  <% if(resources.length === 0) { %>
+    <p>No resources found matching your criteria.</p>
+  <% } else { %>
+    <% resources.forEach(resource => { %>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+          <span class="badge badge-approved"><%= resource.category %></span>
+          <span style="font-size: 0.75rem; color: var(--text-light);"><%= resource.downloads %> downloads</span>
+        </div>
+        <h4 style="margin-bottom: 0.5rem;"><%= resource.title %></h4>
+        <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 1rem;"><%= resource.description %></p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <a href="<%= resource.fileUrl %>" target="_blank" class="btn btn-primary" style="font-size: 0.875rem;" onclick="trackDownload('<%= resource._id %>')">Download</a>
+          <button class="btn btn-outline" style="font-size: 0.875rem; padding: 0.25rem 0.5rem;" onclick="bookmark('<%= resource._id %>')">Bookmark</button>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+<script>
+  async function trackDownload(id) {
+    try { await fetch(`/api/resources/${id}/download`, { method: 'POST' }); } catch (e) {}
+  }
+  async function bookmark(id) {
+    try {
+      const res = await fetch(`/api/resources/${id}/bookmark`, { method: 'POST' });
+      const data = await res.json();
+      alert(data.message);
+    } catch (e) { alert('Error bookmarking'); }
+  }
+</script>
